@@ -13,6 +13,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+
 import logging
 from pathlib import Path
 
@@ -49,10 +51,21 @@ def scrape_text_with_selenium(url):
     )
 
     # Get the HTML content directly from the browser's DOM
+    elements = driver.find_elements(By.CSS_SELECTOR, "body *")
+
+    # Iterate over each element and remove the non-visible ones
+    for element in elements:
+        try:
+            if not element.is_displayed():
+                driver.execute_script("arguments[0].remove()", element)
+        except:
+            pass
+
     page_source = driver.execute_script("return document.body.outerHTML;")
+
     soup = BeautifulSoup(page_source, "html.parser")
 
-    for script in soup(["script", "style"]):
+    for script in soup(["script", "style", "noscript", "aside", "footer"]):
         script.extract()
 
     text = soup.get_text()
