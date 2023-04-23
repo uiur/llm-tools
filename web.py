@@ -18,6 +18,7 @@ from pathlib import Path
 
 def browse_website(url):
     driver, text = scrape_text_with_selenium(url)
+    title = scrape_title_with_selenium(driver)
     # add_header(driver)
     links = scrape_links_with_selenium(driver)
 
@@ -26,7 +27,8 @@ def browse_website(url):
         links = links[:5]
     close_browser(driver)
 
-    return text
+    output = f"# {title}\n\n{text}"
+    return output
 
 
 def scrape_text_with_selenium(url):
@@ -59,6 +61,12 @@ def scrape_text_with_selenium(url):
     text = "\n".join(chunk for chunk in chunks if chunk)
     return driver, text
 
+
+def scrape_title_with_selenium(driver):
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, "html.parser")
+
+    return soup.find("title").text
 
 def scrape_links_with_selenium(driver):
     page_source = driver.page_source
