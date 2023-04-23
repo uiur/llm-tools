@@ -51,7 +51,7 @@ def scrape_text_with_selenium(url):
     )
 
     # Get the HTML content directly from the browser's DOM
-    elements = driver.find_elements(By.CSS_SELECTOR, "body *")
+    elements = driver.find_elements(By.CSS_SELECTOR, "body div")
 
     # Iterate over each element and remove the non-visible ones
     for element in elements:
@@ -65,7 +65,7 @@ def scrape_text_with_selenium(url):
 
     soup = BeautifulSoup(page_source, "html.parser")
 
-    for script in soup(["script", "style", "noscript", "aside", "footer"]):
+    for script in soup(["script", "style", "noscript", "aside", "footer", "option"]):
         script.extract()
 
     text = soup.get_text()
