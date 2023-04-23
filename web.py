@@ -1,7 +1,7 @@
 # Usage:
 #   poetry run python web.py https://www.google.com/
 #
-# About:
+# Description:
 #   This script uses Selenium to scrape the text from a website.
 #
 # This code is originally from https://github.com/Significant-Gravitas/Auto-GPT/blob/60b2b61b52c263dba25a6c33623561273e890229/autogpt/web.py
