@@ -49,6 +49,8 @@ def scrape_text_with_selenium(url):
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
+    # import time
+    # time.sleep(5)
 
     # Get the HTML content directly from the browser's DOM
     elements = driver.find_elements(By.CSS_SELECTOR, "body div")
@@ -68,7 +70,7 @@ def scrape_text_with_selenium(url):
     for script in soup(["script", "style", "noscript", "aside", "footer", "option"]):
         script.extract()
 
-    text = soup.get_text()
+    text = soup.get_text("\n", strip=True)
     lines = (line.strip() for line in text.splitlines())
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     text = "\n".join(chunk for chunk in chunks if chunk)
