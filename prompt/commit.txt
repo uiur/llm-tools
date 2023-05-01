@@ -1,0 +1,12 @@
+{# system: You're a world-class engineer. #}
+{{text}}
+
+---
+
+Summarize the diff and write a good git commit message.
+Utilize the best practice:
+- Write a meaningful subject line
+- Use the imperative mood
+- Keep the body of the message concise
+
+Write the commit message:

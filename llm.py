@@ -1,10 +1,22 @@
 #!/usr/bin/env python
+
+# CLI to openai's language model
+#
+# Inspired by https://github.com/simonw/llm
+#
 ### Examples
 # llm.py prompt.txt
 # llm.py prompt_template.txt argument1 argument2
 # echo "Just say hello" | llm.py
 # echo "input text" | llm.py prompt_template.txt
 # llm.py --stream "Just say hello in {{language}}" Japanese
+#
+### Template
+# {{...}} is used to specify a variable in the prompt
+# Example:
+#   Just say hello in {{language}}
+#
+# {{# system: ... #}} in the first line is used to specify a system prompt.
 
 import click
 import os
@@ -25,6 +37,10 @@ def is_prompt_template(prompt):
 def extract_variable_names_from_prompt_template(prompt_template):
   return re.findall(r'\{\{(.*)\}\}', prompt_template)
 
+# {# system: ...  #} in the first line is system prompt
+def parse_system_prompt_from_prompt_template(prompt_template):
+  return re.findall(r'\{\#\s?system\:\s*(.*)\s*\#\}', prompt_template)[0]
+
 def render_prompt_template(prompt_template, args):
   template = jinja2.Template(prompt_template)
   variable_names = extract_variable_names_from_prompt_template(prompt_template)
@@ -43,6 +59,7 @@ def render_prompt_template(prompt_template, args):
 def cli(prompt, args, stream, verbose):
     openai.api_key = get_openai_api_key()
     model = "gpt-3.5-turbo"
+    system = None
 
     if verbose:
       logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -80,6 +97,7 @@ def cli(prompt, args, stream, verbose):
 
           expanded_args.append(arg)
 
+        system = parse_system_prompt_from_prompt_template(prompt_template)
         prompt = render_prompt_template(prompt_template, expanded_args)
 
       logging.debug(prompt)
@@ -89,6 +107,9 @@ def cli(prompt, args, stream, verbose):
        prompt = sys.stdin.read()
 
     messages = []
+    if system:
+      messages.append({"role": "system", "content": system})
+
     messages.append({"role": "user", "content": prompt})
 
     if stream:
