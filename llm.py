@@ -54,12 +54,12 @@ def render_prompt_template(prompt_template, args):
 @click.command()
 @click.argument('prompt', required=False)
 @click.argument('args', nargs=-1)
+@click.option("--system", help="System prompt to use")
 @click.option("-s", "--stream", is_flag=True, help="Stream output")
 @click.option("-v", "--verbose", is_flag=True, help="Verbose output")
-def cli(prompt, args, stream, verbose):
+def cli(prompt, args, system, stream, verbose):
     openai.api_key = get_openai_api_key()
     model = "gpt-3.5-turbo"
-    system = None
 
     if verbose:
       logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
